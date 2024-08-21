@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: redis-data-inserter
+spec:
+  schedule: "*/1 * * * *"
+  successfulJobsHistoryLimit: 10
+  failedJobsHistoryLimit: 10
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: redis-data-inserter
+            image: redis:6.2
+            command: ["sh", "-c", "redis-cli -h redis SET key-$(date +%s) value-$(date +%s)"]
+          restartPolicy: OnFailure
